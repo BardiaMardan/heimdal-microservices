@@ -23,6 +23,7 @@ def register(user_in: UserCreate):
     users_db[user_in.email] = user
     return user
 
+
 @router.post("/login/access-token", response_model=Token)
 def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = users_db.get(form_data.username)
