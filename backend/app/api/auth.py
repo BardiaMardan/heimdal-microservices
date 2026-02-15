@@ -1,4 +1,5 @@
 from datetime import timedelta
+from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from app.core import security
@@ -25,7 +26,7 @@ def register(user_in: UserCreate):
 
 
 @router.post("/login/access-token", response_model=Token)
-def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+def login_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     user = users_db.get(form_data.username)
     if not user or not security.verify_password(form_data.password, user.hashed_password):
         raise HTTPException(status_code=400, detail="Incorrect email or password")
