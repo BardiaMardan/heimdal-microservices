@@ -1,10 +1,10 @@
-from contextlib import async_contextmanager
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import auth, agent
 from app.core.config import settings
 
-@async_contextmanager
+@asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup logic
     print(f"Starting {settings.PROJECT_NAME}...")
