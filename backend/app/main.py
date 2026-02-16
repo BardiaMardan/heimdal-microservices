@@ -1,16 +1,18 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+import time
+import logging
 from app.api import auth, agent
 from app.core.config import settings
+from app.core.logging import setup_logging
+
+logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup logic
-    print(f"Starting {settings.PROJECT_NAME}...")
+    setup_logging()
     yield
-    # Shutdown logic
-    print(f"Shutting down {settings.PROJECT_NAME}...")
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -18,14 +20,31 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Set up CORS
+# CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Adjust in production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    duration = time.time() - start_time
+    
+    logger.info(
+        "request_processed",
+        extra={
+            "method": request.method,
+            "path": request.url.path,
+            "status_code": response.status_code,
+            "duration": duration
+        }
+    )
+    return response
 
 # Register routers
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
