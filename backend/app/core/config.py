@@ -5,6 +5,7 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "Heimdall Orchestrator"
     ENVIRONMENT: str = "development"
+    BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000"]
     
     # Security
     SECRET_KEY: str
