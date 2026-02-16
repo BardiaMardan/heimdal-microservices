@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 import time
 import logging
-from app.api import auth, agent
+from app.api import auth, agent, health
 from app.core.config import settings
 from app.core.logging import setup_logging
 from app.core.exceptions import HeimdallException
@@ -93,7 +93,6 @@ async def generic_exception_handler(request: Request, exc: Exception):
 # Register routers
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
 app.include_router(agent.router, prefix=f"{settings.API_V1_STR}/agent", tags=["agent"])
+app.include_router(health.router, tags=["health"])
 
-@app.get("/health", tags=["health"])
-def health_check():
-    return {"status": "ok", "project": settings.PROJECT_NAME}
+
