@@ -1,9 +1,10 @@
-import jwt
 from typing import Annotated
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
+import jwt
 from pydantic import ValidationError
 from app.core.config import settings
+from app.core.exceptions import AuthError, NotFoundError
 from app.models.user import TokenData, User, users_db
 
 reusable_oauth2 = OAuth2PasswordBearer(
@@ -17,11 +18,8 @@ def get_current_user(token: Annotated[str, Depends(reusable_oauth2)]) -> User:
         )
         token_data = TokenData(**payload)
     except (jwt.InvalidTokenError, ValidationError):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Could not validate credentials",
-        )
+        raise AuthError(message="Could not validate credentials")
     user = users_db.get(token_data.sub if hasattr(token_data, 'sub') else payload.get("sub"))
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise NotFoundError(message="User not found")
     return user
