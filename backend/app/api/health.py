@@ -6,7 +6,7 @@ router = APIRouter()
 @router.get("/health")
 def health_check():
     llm_status = "disconnected"
-    if settings.OPENAI_API_KEY:
+    if settings.GOOGLE_AI_API_KEY:
         llm_status = "connected"
     
     return {

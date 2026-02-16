@@ -1,25 +1,29 @@
-from typing import Any
+from typing import List
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
+from fastapi.responses import StreamingResponse
 from app.api.deps import get_current_user
 from app.models.user import User
-from app.services.llm import llm_service
+from app.models.agent import ChatRequest, ChatResponse
+from app.services.llm_service import llm_service
 
 router = APIRouter()
 
-class ChatRequest(BaseModel):
-    message: str
+# TODO : In-memory history (will be Redis/Postgres later)
+history = []
 
-class ChatResponse(BaseModel):
-    response: str
-
-@router.post("/chat", response_model=ChatResponse)
+@router.post("/chat")
 async def chat_with_agent(
     request: ChatRequest,
     current_user: User = Depends(get_current_user)
-) -> Any:
-    """
-    Main orchestration endpoint for the home automation agent.
-    """
-    response = await llm_service.chat(request.message)
-    return ChatResponse(response=response)
+) -> StreamingResponse:
+    return StreamingResponse(
+        llm_service.chat_stream(request.message),
+        media_type="text/plain"
+    )
+
+@router.get("/history")
+async def get_history(
+    current_user: User = Depends(get_current_user)
+) -> List[dict]:
+    # TODO : Return history
+    return history
