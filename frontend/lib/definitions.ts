@@ -10,5 +10,10 @@ export interface AuthResponse {
 }
 
 export interface ApiError {
-  detail: string | { msg: string }[];
+  detail?: string | { msg: string }[];
+  error?: {
+    code: string;
+    message: string;
+    details?: any;
+  };
 }

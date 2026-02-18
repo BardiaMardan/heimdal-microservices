@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { AuthResponse, User } from "@/lib/definitions";
+import { ApiError, AuthResponse, User } from "@/lib/definitions";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -61,10 +61,24 @@ export async function register(formData: FormData) {
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    return { error: error.detail || "Registration failed" };
+    const errorData: ApiError = await response.json();
+
+    if (errorData.error) {
+      return { error: errorData.error.message };
+    }
+
+    if (errorData.detail) {
+      if (typeof errorData.detail === "string") {
+        return { error: errorData.detail };
+      }
+
+      if (Array.isArray(errorData.detail)) {
+        return { error: errorData.detail.map((e) => e.msg).join(", ") };
+      }
+    }
+
+    return { error: "Registration failed" };
   }
 
-  // Auto login after register
   return login(formData);
 }
