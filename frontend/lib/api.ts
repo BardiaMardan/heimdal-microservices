@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { StandardResponse } from "@/lib/definitions";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -25,16 +26,18 @@ export async function fetchApi<T>(
     redirect("/login");
   }
 
-  if (!response.ok) {
-    const error = await response
-      .json()
-      .catch(() => ({ detail: "Something went wrong" }));
-    throw new Error(error.detail || "API request failed");
+  const result: StandardResponse<T> = await response
+    .json()
+    .catch(() => ({
+      status: false,
+      code: response.status,
+      message: "Something went wrong",
+      data: null,
+    }));
+
+  if (!response.ok || !result.status) {
+    throw new Error(result.message || "API request failed");
   }
 
-  if (response.status === 204) {
-    return {} as T;
-  }
-
-  return response.json();
+  return result.data as T;
 }

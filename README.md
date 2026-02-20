@@ -53,6 +53,37 @@ A modern AI-powered home automation orchestrator.
     ```
 5.  Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+## API Response Format
+
+All endpoints return a standardized response:
+
+```json
+{
+  "status": true,
+  "code": 200,
+  "message": "Success",
+  "data": { ... }
+}
+```
+
+| Field     | Type            | Description                           |
+| --------- | --------------- | ------------------------------------- |
+| `status`  | `boolean`       | `true` for success, `false` for error |
+| `code`    | `integer`       | HTTP status code                      |
+| `message` | `string`        | Human-readable message                |
+| `data`    | `any` \| `null` | Response payload (null on errors)     |
+
+**Error example:**
+
+```json
+{
+  "status": false,
+  "code": 401,
+  "message": "Incorrect email or password",
+  "data": null
+}
+```
+
 ## API Documentation
 
 - Swagger UI: [http://localhost:8000/docs](http://localhost:8000/docs)

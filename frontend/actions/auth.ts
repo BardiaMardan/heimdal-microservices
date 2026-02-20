@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { ApiError, AuthResponse, User } from "@/lib/definitions";
+import { StandardResponse, AuthResponse } from "@/lib/definitions";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -21,17 +21,17 @@ export async function login(formData: FormData) {
     }),
   });
 
-  if (!response.ok) {
-    return { error: "Invalid credentials" };
+  const result: StandardResponse<AuthResponse> = await response.json();
+
+  if (!result.status) {
+    return { error: result.message };
   }
 
-  const data: AuthResponse = await response.json();
-
   const cookieStore = await cookies();
-  cookieStore.set("session", data.access_token, {
+  cookieStore.set("session", result.data!.access_token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 60 * 24 * 7, // 1 week
+    maxAge: 60 * 60 * 24 * 7,
     path: "/",
   });
 
@@ -47,7 +47,6 @@ export async function logout() {
 export async function register(formData: FormData) {
   const email = formData.get("email");
   const password = formData.get("password");
-  // const name = formData.get('name'); // user model needs updating backend side for name first
 
   const response = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
@@ -60,24 +59,10 @@ export async function register(formData: FormData) {
     }),
   });
 
-  if (!response.ok) {
-    const errorData: ApiError = await response.json();
+  const result: StandardResponse = await response.json();
 
-    if (errorData.error) {
-      return { error: errorData.error.message };
-    }
-
-    if (errorData.detail) {
-      if (typeof errorData.detail === "string") {
-        return { error: errorData.detail };
-      }
-
-      if (Array.isArray(errorData.detail)) {
-        return { error: errorData.detail.map((e) => e.msg).join(", ") };
-      }
-    }
-
-    return { error: "Registration failed" };
+  if (!result.status) {
+    return { error: result.message };
   }
 
   return login(formData);

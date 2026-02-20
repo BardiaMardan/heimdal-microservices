@@ -9,11 +9,16 @@ export interface AuthResponse {
   token_type: string;
 }
 
+export interface StandardResponse<T = any> {
+  status: boolean;
+  code: number;
+  message: string;
+  data: T | null;
+}
+
 export interface ApiError {
-  detail?: string | { msg: string }[];
-  error?: {
-    code: string;
-    message: string;
-    details?: any;
-  };
+  status: false;
+  code: number;
+  message: string;
+  data: any;
 }
