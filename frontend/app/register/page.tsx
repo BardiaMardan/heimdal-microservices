@@ -46,30 +46,28 @@ export default function RegisterPage() {
     if (response?.error) {
       setError(response.error);
       setIsLoading(false);
-    } else {
-      // register action handles redirect
     }
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-black py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-zinc-900">
+          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-white">
             Create your account
           </h2>
-          <p className="mt-2 text-center text-sm text-zinc-600">
+          <p className="mt-2 text-center text-sm text-white">
             Already have an account?{" "}
             <Link
               href="/login"
-              className="font-medium text-zinc-900 hover:text-zinc-700 underline"
+              className="font-medium text-white underline"
             >
               Sign in
             </Link>
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={onSubmit}>
-          <div className="space-y-4 rounded-md shadow-sm">
+          <div className="space-y-4">
             <Input
               id="email"
               name="email"
