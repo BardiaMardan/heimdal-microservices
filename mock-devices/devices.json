@@ -1,0 +1,8 @@
+[
+  { "name": "Lathe-01",        "type": "machine",        "location": "Bay 3" },
+  { "name": "CNC-Mill-02",     "type": "machine",        "location": "Bay 4" },
+  { "name": "WeatherStn-A",    "type": "environmental",  "location": "Roof" },
+  { "name": "ColdRoom-Sensor", "type": "environmental",  "location": "Warehouse W2" },
+  { "name": "Truck-117",       "type": "fleet",          "location": "In transit" },
+  { "name": "StorageUnit-12B", "type": "storage",        "location": "Yard B" }
+]

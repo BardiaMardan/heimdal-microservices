@@ -3,15 +3,18 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
-    PROJECT_NAME: str = "Heimdall Orchestrator"
+    PROJECT_NAME: str = "Heimdall"
     ENVIRONMENT: str = "development"
     BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000"]
-    
+
+    # Database (sync SQLAlchemy + psycopg v3 — see docs/adr/0006)
+    DATABASE_URL: str = "postgresql+psycopg://heimdall:heimdall@localhost:5432/heimdall"
+
     # Security
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
-    
+
     GOOGLE_AI_API_KEY: str | None = None
     
     model_config = SettingsConfigDict(
