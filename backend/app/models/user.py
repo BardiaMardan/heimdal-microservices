@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from sqlalchemy import Boolean, DateTime, String, func
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -28,7 +28,9 @@ class User(Base):
 
 class UserCreate(BaseModel):
     email: EmailStr
-    password: str
+    # Argon2 has no practical input ceiling, but cap length so an attacker can't
+    # force expensive hashes with megabyte passwords. 8 is a sane lower floor.
+    password: str = Field(min_length=8, max_length=128)
 
 
 class UserResponse(BaseModel):

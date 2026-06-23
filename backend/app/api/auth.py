@@ -8,14 +8,16 @@ from sqlalchemy.orm import Session
 from app.core import security
 from app.core.config import settings
 from app.core.db import get_db
+from app.api.deps import get_current_user
 from app.core.exceptions import AuthError
 from app.models.response import success_response
-from app.models.user import UserCreate, UserResponse
+from app.models.user import User, UserCreate, UserResponse
 from app.services import user_service
 
 router = APIRouter()
 
 DbSession = Annotated[Session, Depends(get_db)]
+CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
 @router.post("/register")
@@ -48,4 +50,12 @@ def login_access_token(
       "token_type": "bearer",
     },
     message="Login successful",
+  )
+
+
+@router.get("/me")
+def read_current_user(current_user: CurrentUser):
+  return success_response(
+    data=UserResponse.model_validate(current_user).model_dump(),
+    message="Current user retrieved",
   )

@@ -6,19 +6,28 @@ from app.core.exceptions import HeimdallException
 from app.models.user import User, UserCreate
 
 
+def _normalize_email(email: str) -> str:
+    """Single source of truth for email comparison: case- and whitespace-
+    insensitive. Applied on every read and write so form-login matches register."""
+    return email.strip().lower()
+
+
 def get_by_email(db: Session, email: str) -> User | None:
-    return db.scalars(select(User).where(User.email == email)).first()
+    return db.scalars(
+        select(User).where(User.email == _normalize_email(email))
+    ).first()
 
 
 def create_user(db: Session, payload: UserCreate) -> User:
-    if get_by_email(db, payload.email) is not None:
+    email = _normalize_email(payload.email)
+    if get_by_email(db, email) is not None:
         raise HeimdallException(
             message="A user with this email already exists.",
             code="USER_EXISTS",
             status_code=409,
         )
     user = User(
-        email=payload.email,
+        email=email,
         hashed_password=security.get_password_hash(payload.password),
     )
     db.add(user)
