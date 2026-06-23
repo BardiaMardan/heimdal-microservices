@@ -10,7 +10,7 @@ const manrope = Manrope({
 
 export const metadata: Metadata = {
   title: "Heimdall",
-  description: "AI-powered home automation orchestrator",
+  description: "Industrial IoT telemetry platform",
 };
 
 export default function RootLayout({

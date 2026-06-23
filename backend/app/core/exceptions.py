@@ -49,12 +49,3 @@ class ValidationError(HeimdallException):
             status_code=422,
             details=details
         )
-
-class LLMAPIError(HeimdallException):
-    def __init__(self, message: str, provider: str, details: Optional[Dict[str, Any]] = None):
-        super().__init__(
-            message=message,
-            code="LLM_API_ERROR",
-            status_code=502,
-            details={"provider": provider, **(details or {})}
-        )

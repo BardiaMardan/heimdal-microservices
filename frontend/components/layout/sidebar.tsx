@@ -7,9 +7,9 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
 const navigation = [
-  { name: "Agent", href: "/dashboard/agent" },
-  { name: "Scenes", href: "/dashboard/scenes" },
+  { name: "Dashboard", href: "/dashboard" },
   { name: "Devices", href: "/dashboard/devices" },
+  { name: "Telemetry", href: "/dashboard/telemetry" },
   { name: "Logs", href: "/dashboard/logs" },
 ];
 

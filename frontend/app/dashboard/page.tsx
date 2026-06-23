@@ -8,21 +8,21 @@ export default function DashboardPage() {
           Dashboard
         </h1>
         <p className="mt-2 text-sm sm:text-base text-white/80">
-          Welcome to Heimdall. Your AI-powered home automation orchestrator.
+          Heimdall — Industrial IoT telemetry monitoring.
         </p>
       </div>
 
       <div className="grid gap-4 sm:gap-6">
         <Card className="min-h-[400px]">
           <CardHeader>
-            <CardTitle>Agent Chat</CardTitle>
+            <CardTitle>Device Telemetry</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-center h-full min-h-[300px]">
               <div className="text-center">
-                <p className="text-lg font-medium text-white">Agent Chat</p>
+                <p className="text-lg font-medium text-white">No data yet</p>
                 <p className="text-sm text-white/60 mt-2">
-                  TODO: Agent chat interface will be implemented here.
+                  Live telemetry will appear here once ingestion is wired up.
                 </p>
               </div>
             </div>
