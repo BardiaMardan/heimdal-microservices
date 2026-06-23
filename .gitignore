@@ -9,3 +9,13 @@ frontend/.next/
 frontend/node_modules/
 frontend/.env.local
 frontend/.env
+
+# Environment files
+backend/.env
+
+# Local tooling and internal working docs
+.claude/
+.agents/
+skills-lock.json
+CLAUDE.md
+docs/
