@@ -1,8 +1,8 @@
-from typing import Annotated
+from typing import Annotated, Optional
 
 import jwt
 from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
@@ -12,17 +12,20 @@ from app.core.exceptions import AuthError
 from app.models.user import TokenData, User
 from app.services import user_service
 
-reusable_oauth2 = OAuth2PasswordBearer(
-    tokenUrl=f"{settings.API_V1_STR}/auth/login/access-token"
-)
+reusable_bearer = HTTPBearer(auto_error=False)
 
 
 def get_current_user(
-    token: Annotated[str, Depends(reusable_oauth2)],
+    credentials: Annotated[Optional[HTTPAuthorizationCredentials], Depends(reusable_bearer)],
     db: Annotated[Session, Depends(get_db)],
 ) -> User:
+    if credentials is None:
+        raise AuthError(message="Not authenticated")
+
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        payload = jwt.decode(
+            credentials.credentials, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+        )
         token_data = TokenData(**payload)
     except (jwt.InvalidTokenError, ValidationError):
         raise AuthError(message="Could not validate credentials")

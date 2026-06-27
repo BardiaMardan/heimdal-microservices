@@ -2,7 +2,6 @@ from datetime import timedelta
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
-from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from app.core import security
@@ -11,7 +10,7 @@ from app.core.db import get_db
 from app.api.deps import get_current_user
 from app.core.exceptions import AuthError
 from app.models.response import success_response
-from app.models.user import User, UserCreate, UserResponse
+from app.models.user import LoginRequest, User, UserCreate, UserResponse
 from app.services import user_service
 
 router = APIRouter()
@@ -31,11 +30,8 @@ def register(user_in: UserCreate, db: DbSession):
 
 
 @router.post("/login/access-token")
-def login_access_token(
-  form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-  db: DbSession,
-):
-  user = user_service.authenticate(db, form_data.username, form_data.password)
+def login_access_token(body: LoginRequest, db: DbSession):
+  user = user_service.authenticate(db, body.email, body.password)
   if not user:
     raise AuthError(message="Incorrect email or password")
   if not user.is_active:

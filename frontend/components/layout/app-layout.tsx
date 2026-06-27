@@ -9,15 +9,20 @@ import { useState } from "react";
 export function AppLayout({
   children,
   rightPanel,
+  userEmail,
 }: {
   children: React.ReactNode;
   rightPanel?: React.ReactNode;
+  userEmail?: string;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-black">
-      <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
+      <Header
+        onMenuClick={() => setSidebarOpen(!sidebarOpen)}
+        userEmail={userEmail}
+      />
       <div className="flex pt-16">
         <div className="hidden lg:block">
           <Sidebar isOpen={true} />

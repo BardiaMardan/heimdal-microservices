@@ -7,9 +7,10 @@ import { Menu } from "lucide-react";
 
 interface HeaderProps {
   onMenuClick?: () => void;
+  userEmail?: string;
 }
 
-export function Header({ onMenuClick }: HeaderProps) {
+export function Header({ onMenuClick, userEmail }: HeaderProps) {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-white/10 bg-black/80 backdrop-blur-sm">
       <div className="flex h-full items-center justify-between px-4 sm:px-6">
@@ -29,9 +30,11 @@ export function Header({ onMenuClick }: HeaderProps) {
           </Link>
         </div>
         <div className="flex items-center gap-4">
-          <span className="hidden sm:inline-block text-sm font-medium text-white/80">
-            user@example.com
-          </span>
+          {userEmail && (
+            <span className="hidden sm:inline-block text-sm font-medium text-white/80">
+              {userEmail}
+            </span>
+          )}
           <form action={logout}>
             <Button type="submit" variant="outline" size="sm">
               Logout

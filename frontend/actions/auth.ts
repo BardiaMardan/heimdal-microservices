@@ -13,12 +13,9 @@ export async function login(formData: FormData) {
   const response = await fetch(`${API_URL}/auth/login/access-token`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
+      "Content-Type": "application/json",
     },
-    body: new URLSearchParams({
-      username: email as string,
-      password: password as string,
-    }),
+    body: JSON.stringify({ email, password }),
   });
 
   const result: StandardResponse<AuthResponse> = await response.json();
