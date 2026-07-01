@@ -1,0 +1,48 @@
+# Heimdall Phase 1 stack: `docker compose up` brings up Postgres, the Mosquitto
+# broker, and the backend (which migrates on start). The mock fleet stays on the
+# host (see mock-devices/) — it stands in for real sensors, not infrastructure.
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: heimdall
+      POSTGRES_PASSWORD: heimdall
+      POSTGRES_DB: heimdall
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U heimdall"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mosquitto_data:/mosquitto/data
+
+  backend:
+    build: ./backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgresql+psycopg://heimdall:heimdall@postgres:5432/heimdall
+      MQTT_BROKER_HOST: mosquitto
+      MQTT_BROKER_PORT: 1883
+      # Dev-only default. Override for anything real: `export SECRET_KEY=$(openssl rand -hex 32)`.
+      SECRET_KEY: ${SECRET_KEY:-dev_secret_change_me_00000000000000000000000000000000}
+      BACKEND_CORS_ORIGINS: '["http://localhost:3000"]'
+    ports:
+      - "8000:8000"
+
+volumes:
+  pgdata:
+  mosquitto_data:

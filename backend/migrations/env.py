@@ -7,7 +7,7 @@ from app.core.config import settings
 from app.core.db import Base
 
 # Import models so their tables register on Base.metadata before autogenerate.
-from app.models import device, user  # noqa: F401
+from app.models import device, telemetry, user  # noqa: F401
 
 config = context.config
 config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)

@@ -1,3 +1,6 @@
+import hashlib
+import secrets
+
 import jwt
 from datetime import datetime, timedelta, timezone
 from typing import Any, Union
@@ -7,6 +10,14 @@ from app.core.config import settings
 
 
 password_hash = PasswordHash((Argon2Hasher(), ))
+
+
+def hash_secret(value: str) -> str:
+    return hashlib.sha256(value.encode()).hexdigest()
+
+
+def generate_device_token() -> str:
+    return secrets.token_urlsafe(32)
 
 def create_access_token(subject: Union[str, Any], expires_delta: timedelta = None) -> str:
     if expires_delta:

@@ -1,0 +1,2 @@
+# Provisioning uses stdlib urllib; telemetry uses MQTT, hence the one dep.
+paho-mqtt>=2.1.0

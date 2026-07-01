@@ -15,6 +15,14 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
 
+    # MQTT telemetry data plane (see docs/adr/0002 + 0009)
+    MQTT_BROKER_HOST: str = "localhost"
+    MQTT_BROKER_PORT: int = 1883
+    MQTT_TOPIC_PREFIX: str = "heimdall"
+    MQTT_QOS: int = 1
+    # Set False in tests/CI so importing the app never dials a broker.
+    INGESTION_ENABLED: bool = True
+
     model_config = SettingsConfigDict(
         env_file=".env",
         case_sensitive=True
