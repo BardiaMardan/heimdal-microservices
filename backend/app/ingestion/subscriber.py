@@ -50,6 +50,15 @@ def _on_connect(client, userdata, flags, reason_code, properties=None) -> None:
     logger.info("mqtt_connected", extra={"topics": [t for t, _ in _topics()]})
 
 
+def _on_disconnect(client, userdata, flags, reason_code, properties=None) -> None:
+    # Fixed client_id + clean_session=False means EXACTLY ONE subscriber may run.
+    # A second instance (a stray `fastapi dev`, or multiple uvicorn workers) will
+    # trigger the broker's "session taken over" and the two will fight forever —
+    # this log is how you'd notice. paho auto-reconnects on genuine drops.
+    if reason_code != 0:
+        logger.warning("mqtt_disconnected", extra={"reason_code": str(reason_code)})
+
+
 def _on_message(client, userdata, msg: mqtt.MQTTMessage) -> None:
     # A crash here would kill the network-loop thread and silently stop ingestion,
     # so every failure mode is caught and logged, never raised.
@@ -92,6 +101,7 @@ def start() -> None:
         protocol=mqtt.MQTTv311,
     )
     client.on_connect = _on_connect
+    client.on_disconnect = _on_disconnect
     client.on_message = _on_message
     client.reconnect_delay_set(min_delay=1, max_delay=30)
     client.connect_async(settings.MQTT_BROKER_HOST, settings.MQTT_BROKER_PORT)

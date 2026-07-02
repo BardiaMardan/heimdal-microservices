@@ -23,7 +23,10 @@ export async function fetchApi<T>(
   });
 
   if (response.status === 401) {
-    redirect("/login");
+    // Clear the stale/invalid cookie via the /logout route handler, then land
+    // on /login. Redirecting straight to /login would loop: proxy.ts sees the
+    // still-present cookie and bounces back to /dashboard.
+    redirect("/logout");
   }
 
   const result: StandardResponse<T> = await response
